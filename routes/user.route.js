@@ -101,15 +101,11 @@ Router.post(
 				return res.status(401).json({ error: "Incorrect password" });
 			}
 
-			const token = jwt.sign(
-				{ userId: user._id },
-				process.env.JWT_SECRET,
-				{
-					expiresIn: "1h",
-				},
-			);
+			const token = jwt.sign({ userId: user._id }, process.env.JWT, {
+				expiresIn: "1h",
+			});
 
-			res.status(200).json({ token });
+			res.status(200).json({ error: null, token: token });
 		} catch (e) {
 			console.error(e);
 			res.status(500).json({ error: "Internal server error" });
@@ -118,7 +114,7 @@ Router.post(
 );
 
 Router.route("/authVerificationTest").get(jwtVerification, (req, res) => {
-	res.send("You're authorized");
+	res.status(200).json({ auth: true, user: req.user });
 });
 
 module.exports = Router;
